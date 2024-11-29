@@ -1,4 +1,3 @@
-// Daten eines einzelnen Projekts laden
 async function loadProjectData(folder) {
     try {
         const response = await fetch(`../assets/${folder}/project.json`);
@@ -29,10 +28,10 @@ async function loadProjectData(folder) {
                 if (detailResponse.ok) {
                     images.push(detailImage);
                 } else {
-                    break;  // Beende die Schleife, wenn ein Detailbild nicht gefunden wird
+                    break;  // Beendet die Schleife, wenn ein Detailbild nicht gefunden wird
                 }
             } catch (e) {
-                break;  // Beende die Schleife, wenn ein Fehler beim Laden auftritt
+                break;  // Beendet die Schleife, wenn ein Fehler beim Laden auftritt
             }
 
             i++;
@@ -47,8 +46,7 @@ async function loadProjectData(folder) {
     }
 }
 
-
-// Projekte für die Index-Seite laden
+// Projekte für die Index-Seite
 async function loadIndexProjects() {
     const params = new URLSearchParams(window.location.search);
     const mainFolder = params.get('main') || 'KickWeb'; // Hauptprojekt aus URL oder Standardwert
@@ -65,7 +63,7 @@ async function loadIndexProjects() {
                 <img src="${mainProject.images[0] || 'placeholder.jpg'}" alt="${mainProject.title}" class="main-project-image">
                 <h2>${mainProject.title}</h2>
                 <p>${mainProject.longDescription || mainProject.shortDescription}</p>
-                <a href="?main=${mainFolder}">Mehr erfahren</a>
+                <a href="project.html?project=${mainFolder}">Mehr erfahren</a>
             </div>
         `;
     } else {
@@ -84,7 +82,7 @@ async function loadIndexProjects() {
                 <img src="${project.images[0] || 'placeholder.jpg'}" alt="${project.title}" class="side-project-image">
                 <h3>${project.title}</h3>
                 <p>${project.shortDescription}</p>
-                <a href="?main=${folder}">Mehr erfahren</a>
+                <a href="project.html?project=${folder}">Mehr erfahren</a>
             `;
 
             sideContainer.appendChild(sideElement);
@@ -92,7 +90,7 @@ async function loadIndexProjects() {
     }
 }
 
-// Projekte für die Galerie laden
+// Projekte für die Galerie
 async function loadAllProjects() {
     const galleryContainer = document.getElementById('gallery-container');
 
@@ -121,7 +119,7 @@ async function loadAllProjects() {
                     <img src="${project.images[0] || 'placeholder.jpg'}" alt="${project.title}" class="gallery-image">
                     <h3>${project.title}</h3>
                     <p>${project.shortDescription}</p>
-                    <a href="?main=${folder}">Mehr erfahren</a>
+                    <a href="project.html?project=${folder}">Mehr erfahren</a>
                 `;
 
                 galleryContainer.appendChild(projectElement);
@@ -132,11 +130,68 @@ async function loadAllProjects() {
     }
 }
 
+// Projekt für Detailansicht
+async function loadProjectDetails() {
+    const container = document.getElementById('project-details-container');
+    if (!container) {
+        console.error('Project details container not found!');
+        return;
+    }
+
+    // Get the project identifier from the query string
+    const urlParams = new URLSearchParams(window.location.search);
+    const projectFolder = urlParams.get('project');
+    if (!projectFolder) {
+        container.innerHTML = '<p>Error: No project specified!</p>';
+        return;
+    }
+
+    try {
+        // Load project data
+        const project = await loadProjectData(projectFolder);
+        if (!project) {
+            container.innerHTML = `<p>Error: Unable to load project data for ${projectFolder}.</p>`;
+            return;
+        }
+
+        // Generate HTML for the project details
+        let imagesHTML = '';
+        for (const image of project.images) {
+            imagesHTML += `<img src="${image}" alt="${project.title}" class="project-image">`;
+        }
+
+        // Add "Check it out" button if the link exists
+        const checkItOutButton = project.link
+            ? `<a href="${project.link}" target="_blank" class="button">Check it out</a>`
+            : '';
+
+        container.innerHTML = `
+            <div class="project-details">
+                <h1>${project.title}</h1>
+                <p>${project.longDescription || project.shortDescription}</p>
+                <div class="project-images">
+                    ${imagesHTML}
+                </div>
+                ${checkItOutButton}
+            </div>
+        `;
+    } catch (error) {
+        console.error('Error loading project details:', error);
+        container.innerHTML = '<p>Error loading project details. Please try again later.</p>';
+    }
+}
+
+// Load project details when the page is ready
+document.addEventListener('DOMContentLoaded', loadProjectDetails);
+
+
 // Beim Laden der Seite entscheiden, welche Funktion ausgeführt werden soll
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('main-project-container') && document.getElementById('side-projects-container')) {
-        loadIndexProjects(); // Index-Seite
+        loadIndexProjects();
     } else if (document.getElementById('gallery-container')) {
-        loadAllProjects(); // Galerie-Seite
+        loadAllProjects();
+    } else if (document.getElementById('project-details-container')) {
+        loadProjectDetails();
     }
 });

@@ -1,7 +1,7 @@
 {
     "title": "Black and White Photography",
-    "shortDescription": "Kurzbeschreibung von Projekt 1.",
-    "longDescription": "Dies ist die ausführliche Beschreibung von Projekt 1 mit mehr Details und Hintergrundinformationen.",
+    "shortDescription": "translating analog to digital",
+    "longDescription": "The aim of this project was to transform several magazine pages into an interactive website format. Over the course of six weeks, I documented my progress in structured sprints, with detailed notes and updates available as issues directly on the website. This process allowed me to explore the fundamentals of web development and marked my first hands-on experience with HTML, CSS, and JavaScript. Through this project, I not only learned the technical aspects of building a website but also how to approach design translation from print to digital while maintaining usability and visual appeal. It was an exciting challenge that laid the foundation for my skills in front-end development.",
     "technologies": ["HTML", "CSS", "JavaScript"],
     "link": "https://black-white-photography.netlify.app"
   }

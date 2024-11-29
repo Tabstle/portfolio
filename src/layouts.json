@@ -1,0 +1,18 @@
+{
+    "layout0": {
+        "main": "SolarPUNK",
+        "side": ["Mentorship1", "StartupInStasis"]
+    },
+    "layout1": {
+        "main": "KickWeb",
+        "side": ["Mentorship1", "StartupInStasis"]
+    },
+    "layout2": {
+        "main": "StartupInStasis",
+        "side": ["KickWeb", "Mentorship1"]
+    },
+    "layout3": {
+        "main": "Mentorship1",
+        "side": ["KickWeb", "StartupInStasis"]
+    }
+}
