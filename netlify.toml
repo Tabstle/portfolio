@@ -1,8 +1,7 @@
 [build]
-  publish = "src"   # Set this to "src" to publish files from the `src` folder
+publish = "/"
 
-[functions]
-  directory = "netlify/functions"  # Correct if using serverless functions (no changes needed here)
-
-[build.environment]
-  NODE_ENV = "production"
+[[redirects]]
+from = "/assets/*"
+to = "/assets/:splat"
+status = 200
