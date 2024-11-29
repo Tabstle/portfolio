@@ -48,47 +48,69 @@ async function loadProjectData(folder) {
 
 // Projekte für die Index-Seite
 async function loadIndexProjects() {
-    const params = new URLSearchParams(window.location.search);
-    const mainFolder = params.get('main') || 'KickWeb'; // Hauptprojekt aus URL oder Standardwert
-    const otherFolders = ['Mentorship1', 'StartupInStasis'].filter(folder => folder !== mainFolder); // Andere Projekte
-
-    const mainContainer = document.getElementById('main-project-container');
-    const sideContainer = document.getElementById('side-projects-container');
-
-    // Hauptprojekt laden
-    const mainProject = await loadProjectData(mainFolder);
-    if (mainProject) {
-        mainContainer.innerHTML = `
-            <div class="main-project">
-                <img src="${mainProject.images[0] || 'placeholder.jpg'}" alt="${mainProject.title}" class="main-project-image">
-                <h2>${mainProject.title}</h2>
-                <p>${mainProject.longDescription || mainProject.shortDescription}</p>
-                <a href="project.html?project=${mainFolder}">Mehr erfahren</a>
-            </div>
-        `;
-    } else {
-        mainContainer.innerHTML = `<p>Hauptprojekt konnte nicht geladen werden.</p>`;
+    // Check if the layout has been set in sessionStorage
+    let layoutKey = sessionStorage.getItem('layout');
+    if (!layoutKey) {
+        // If layout is not set, check the URL query parameter for layout and store it
+        const params = new URLSearchParams(window.location.search);
+        layoutKey = params.get('layout') || 'layout0'; // Default to 'layout0' if not found
+        sessionStorage.setItem('layout', layoutKey); // Store the layout in sessionStorage
     }
 
-    // Nebenprojekte laden
-    sideContainer.innerHTML = ''; // Container leeren
-    for (const folder of otherFolders.slice(0, 2)) {
-        const project = await loadProjectData(folder);
-        if (project) {
-            const sideElement = document.createElement('div');
-            sideElement.classList.add('side-project');
-
-            sideElement.innerHTML = `
-                <img src="${project.images[0] || 'placeholder.jpg'}" alt="${project.title}" class="side-project-image">
-                <h3>${project.title}</h3>
-                <p>${project.shortDescription}</p>
-                <a href="project.html?project=${folder}">Mehr erfahren</a>
-            `;
-
-            sideContainer.appendChild(sideElement);
+    try {
+        // Fetch the layout configuration
+        const response = await fetch('../assets/layouts.json');
+        if (!response.ok) {
+            throw new Error('Failed to load layout configurations');
         }
+        const layouts = await response.json();
+        const layout = layouts[layoutKey];
+
+        if (!layout) {
+            throw new Error(`Layout ${layoutKey} not found`);
+        }
+
+        const mainContainer = document.getElementById('main-project-container');
+        const sideContainer = document.getElementById('side-projects-container');
+
+        // Load the main project
+        const mainProject = await loadProjectData(layout.main);
+        if (mainProject) {
+            mainContainer.innerHTML = `
+                <div class="main-project">
+                    <img src="${mainProject.images[0] || 'placeholder.jpg'}" alt="${mainProject.title}" class="main-project-image">
+                    <h2>${mainProject.title}</h2>
+                    <p>${mainProject.longDescription || mainProject.shortDescription}</p>
+                    <a href="project.html?project=${layout.main}&layout=${layoutKey}">Mehr erfahren</a>
+                </div>
+            `;
+        } else {
+            mainContainer.innerHTML = `<p>Hauptprojekt konnte nicht geladen werden.</p>`;
+        }
+
+        // Load side projects
+        sideContainer.innerHTML = ''; // Clear the container
+        for (const folder of layout.side) {
+            const project = await loadProjectData(folder);
+            if (project) {
+                const sideElement = document.createElement('div');
+                sideElement.classList.add('side-project');
+
+                sideElement.innerHTML = `
+                    <img src="${project.images[0] || 'placeholder.jpg'}" alt="${project.title}" class="side-project-image">
+                    <h3>${project.title}</h3>
+                    <p>${project.shortDescription}</p>
+                    <a href="project.html?project=${folder}&layout=${layoutKey}">Mehr erfahren</a>
+                `;
+
+                sideContainer.appendChild(sideElement);
+            }
+        }
+    } catch (error) {
+        console.error('Error loading index projects:', error);
     }
 }
+
 
 // Projekte für die Galerie
 async function loadAllProjects() {
