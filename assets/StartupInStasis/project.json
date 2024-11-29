@@ -1,0 +1,8 @@
+{
+    "title": "Startup in Stasis",
+    "shortDescription": "Kurzbeschreibung von Projekt 1.",
+    "longDescription": "Dies ist die ausführliche Beschreibung von Projekt 1 mit mehr Details und Hintergrundinformationen.",
+    "technologies": ["HTML", "CSS", "JavaScript"],
+    "link": "https://black-white-photography.netlify.app"
+  }
+  
