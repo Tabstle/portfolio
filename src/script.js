@@ -1,6 +1,6 @@
 async function loadProjectData(folder) {
     try {
-        const response = await fetch(`../assets/${folder}/project.json`);
+        const response = await fetch(`/assets/${folder}/project.json`);
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status} for ${folder}`);
         }
@@ -11,7 +11,7 @@ async function loadProjectData(folder) {
 
         // Versuche das Hauptbild zu laden
         try {
-            const mainImage = `../assets/${folder}/main.jpg`;
+            const mainImage = `/assets/${folder}/main.jpg`;
             const imageResponse = await fetch(mainImage);
             if (imageResponse.ok) images.push(mainImage);
         } catch (e) {
@@ -21,7 +21,7 @@ async function loadProjectData(folder) {
         // Detailbilder hinzufügen
         let i = 1;
         while (true) {
-            const detailImage = `../assets/${folder}/detail${i}.jpg`;
+            const detailImage = `/assets/${folder}/detail${i}.jpg`;
 
             try {
                 const detailResponse = await fetch(detailImage);
@@ -59,7 +59,7 @@ async function loadIndexProjects() {
 
     try {
         // Fetch the layout configuration
-        const response = await fetch('../assets/layouts.json');
+        const response = await fetch('/assets/layouts.json');
         if (!response.ok) {
             throw new Error('Failed to load layout configurations');
         }
@@ -125,7 +125,7 @@ async function loadAllProjects() {
 
     try {
         // Fetch the list of project folders from the JSON file
-        const response = await fetch('../assets/projects.json');
+        const response = await fetch('/assets/projects.json');
         if (!response.ok) {
             throw new Error('Failed to load project list');
         }
